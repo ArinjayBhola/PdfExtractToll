@@ -1,9 +1,9 @@
 import { useState } from "react";
-import FileUpload from "./components/FileUpload";
-import ActionButtons from "./components/ActionButtons";
-import RawTextViewer from "./components/RawTextViewer";
-import StructuredDataViewer from "./components/StructuredDataViewer";
-import { extractStructuredDataFromGemini } from "./utils/gemini";
+import FileUpload from "./components/FileUpload.jsx";
+import ActionButtons from "./components/ActionButtons.jsx";
+import RawTextViewer from "./components/RawTextViewer.jsx";
+import StructuredDataViewer from "./components/StructuredDataViewer.jsx";
+import { extractStructuredDataFromGemini } from "./utils/gemini.jsx";
 
 export default function App() {
   const [pdfFile, setPdfFile] = useState(null);

@@ -1,5 +1,3 @@
-import React from "react";
-
 const StructuredDataViewer = ({ structuredData }) => {
   if (!structuredData) return null;
 

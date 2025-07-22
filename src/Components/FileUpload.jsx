@@ -1,4 +1,3 @@
-import React from "react";
 import { UploadCloud } from "lucide-react";
 
 const FileUpload = ({ handleFileChange, pdfFile }) => (

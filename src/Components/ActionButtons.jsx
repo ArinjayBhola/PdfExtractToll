@@ -1,4 +1,3 @@
-// components/ActionButtons.js
 import React from "react";
 import { Loader2, Zap, Sparkles } from "lucide-react";
 
@@ -12,7 +11,6 @@ const ActionButtons = ({
 }) => {
   return (
     <div className="mt-6 flex flex-col items-center space-y-3">
-      {/* Extract Raw Text */}
       <button
         onClick={extractTextFromPDF}
         disabled={!pdfFile || isLoadingText}
@@ -21,7 +19,6 @@ const ActionButtons = ({
         {isLoadingText ? "Extracting..." : "Extract Raw Text"}
       </button>
 
-      {/* Extract Structured Data */}
       {rawText && (
         <button
           onClick={() => extractStructuredDataWithGemini(rawText)}
