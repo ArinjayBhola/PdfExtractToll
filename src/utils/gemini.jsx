@@ -30,6 +30,7 @@ ${rawText}
       }),
     },
   );
+  console.log(response);
 
   const result = await response.json();
 

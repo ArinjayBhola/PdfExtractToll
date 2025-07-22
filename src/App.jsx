@@ -1,9 +1,10 @@
 import { useState } from "react";
-import FileUpload from "./components/FileUpload.jsx";
+import FileUpload from "./components/FileUpload";
 import ActionButtons from "./components/ActionButtons.jsx";
 import RawTextViewer from "./components/RawTextViewer.jsx";
 import StructuredDataViewer from "./components/StructuredDataViewer.jsx";
 import { extractStructuredDataFromGemini } from "./utils/gemini.jsx";
+import { generateStructuredPDF } from "./utils/generatePdf";
 
 export default function App() {
   const [pdfFile, setPdfFile] = useState(null);
@@ -99,6 +100,13 @@ export default function App() {
 
       <RawTextViewer rawText={rawText} />
       <StructuredDataViewer structuredData={structuredData} />
+      {structuredData && (
+        <button
+          onClick={() => generateStructuredPDF(structuredData)}
+          className="mt-4 px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
+          Download PDF Summary
+        </button>
+      )}
     </div>
   );
 }
