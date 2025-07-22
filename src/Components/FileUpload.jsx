@@ -1,6 +1,6 @@
 import { UploadCloud } from "lucide-react";
 
-const FileUpload = ({ handleFileChange, pdfFile }) => (
+const FileUpload = ({ handleFileChange, pdfFile }) => {
   <div className="mb-6">
     <h2 className="text-gray-700 font-medium mb-2">Upload PDF</h2>
 
@@ -20,7 +20,7 @@ const FileUpload = ({ handleFileChange, pdfFile }) => (
     </label>
 
     {pdfFile && <p className="text-sm text-green-600 mt-2">Selected file: {pdfFile.name}</p>}
-  </div>
-);
+  </div>;
+};
 
 export default FileUpload;
