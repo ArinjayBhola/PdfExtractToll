@@ -30,12 +30,10 @@ ${rawText}
       }),
     },
   );
-  console.log(response);
 
   const result = await response.json();
 
   const textResponse = result?.candidates?.[0]?.content?.parts?.[0]?.text;
-  console.log(textResponse);
 
   if (!textResponse) {
     throw new Error("Empty response from Gemini.");
