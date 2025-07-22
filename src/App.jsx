@@ -1,8 +1,8 @@
 import { useState } from "react";
-import FileUpload from "./components/FileUpload";
-import ActionButtons from "./components/ActionButtons.jsx";
-import RawTextViewer from "./components/RawTextViewer.jsx";
-import StructuredDataViewer from "./components/StructuredDataViewer.jsx";
+import FileUpload from "./Components/FileUpload.jsx";
+import ActionButtons from "./Components/ActionButtons.jsx";
+import RawTextViewer from "./Components/RawTextViewer.jsx";
+import StructuredDataViewer from "./Components/StructuredDataViewer.jsx";
 import { extractStructuredDataFromGemini } from "./utils/gemini.jsx";
 import { generateStructuredPDF } from "./utils/generatePdf";
 
