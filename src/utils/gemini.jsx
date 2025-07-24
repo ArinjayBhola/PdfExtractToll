@@ -1,15 +1,24 @@
 export async function extractStructuredDataFromGemini(rawText, apiKey) {
   const prompt = `
-From this hotel voucher text, extract the following fields:
-- Guest names
-- Booking references
-- Hotel name and address
-- Check-in/check-out dates
-- Number of guests
-- Room category, inclusions, and meal plans
-- Emergency contact, remarks, policies, etc.
+Extract the following fields from the hotel voucher text below:
 
-Return your answer as a JSON object.
+- Hotel Name
+- Contact
+- Hotel Confirmation
+- Address
+- Booking Date
+- Guest Name
+- Child
+- Adults
+- Check in
+- Check out
+- Nights
+- Rooms
+- Room Category
+- Inclusions
+
+Return the result as a JSON object with each field clearly labeled. Do not add extra fields. Only extract these exact fields.
+
 
 PDF TEXT:
 ${rawText}

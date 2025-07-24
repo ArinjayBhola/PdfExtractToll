@@ -26,6 +26,13 @@ export default function App() {
     }
   };
 
+  const handleRemoveFile = () => {
+    setPdfFile(null);
+    setRawText("");
+    setStructuredData(null);
+    setError("");
+  };
+
   const extractTextFromPDF = async () => {
     if (!pdfFile) return setError("No PDF selected.");
 
@@ -47,7 +54,12 @@ export default function App() {
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
-          const text = content.items.map((item) => item.str).join(" ");
+          const text = content.items
+            .map((item) => item.str)
+            .join("")
+            .replace(/\s{2,}/g, " ")
+            .replace(/([a-z])([A-Z])/g, "$1 $2")
+            .replace(/\n\s+/g, "\n");
           fullText += `Page ${i}:\n${text}\n\n`;
         }
 
@@ -85,6 +97,7 @@ export default function App() {
       <FileUpload
         handleFileChange={handleFileChange}
         pdfFile={pdfFile}
+        handleRemoveFile={handleRemoveFile}
       />
 
       <ActionButtons

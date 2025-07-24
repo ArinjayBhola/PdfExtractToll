@@ -13,10 +13,10 @@ const RawTextViewer = ({ rawText }) => {
       <h3 className="font-semibold mb-2 text-gray-800">Raw Text:</h3>
 
       <pre
-        className={`whitespace-pre-wrap break-words font-mono transition-all duration-300 ${
-          showAll ? "max-h-[1000px]" : "max-h-[60px] overflow-hidden"
+        className={`whitespace-pre-wrap break-words font-mono transition-all duration-300 overflow-x-hidden ${
+          showAll ? "max-h-[1000px]" : "max-h-[80px]"
         }`}>
-        {showAll ? rawText : preview}
+        <code className="block">{showAll ? rawText : preview}</code>
       </pre>
 
       <div className="text-center mt-2">

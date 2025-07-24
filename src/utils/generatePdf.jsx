@@ -1,117 +1,206 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
+import logoBase64 from "./nimbusLogoBase64";
 pdfMake.vfs = pdfFonts.vfs;
 
-export function generateStructuredPDF(data) {
+export async function generateStructuredPDF(data) {
   const docDefinition = {
     content: [
       {
-        columns: [
-          { text: "Nimbus", style: "brand" },
+        canvas: [
           {
-            text: "Hotel Voucher Summary",
-            style: "title",
-            alignment: "right",
+            type: "rect",
+            x: 0,
+            y: 0,
+            w: 595,
+            h: 40,
+            color: "#D32F2F",
           },
         ],
+        absolutePosition: { x: 0, y: 0 },
+        margin: [0, 0, 0, 45],
       },
+
       {
-        canvas: [{ type: "line", x1: 0, y1: 10, x2: 520, y2: 10, lineWidth: 1 }],
-        margin: [0, 6, 0, 10],
+        columns: [
+          {
+            width: "60%",
+            stack: [
+              {
+                image: logoBase64,
+                width: 180,
+                margin: [0, 6, 0, 0],
+              },
+              {
+                text: "Nimbus Tours and Travels Pvt. Ltd.",
+                margin: [90, 5, 0, 0],
+                fontSize: 12,
+                bold: true,
+              },
+            ],
+          },
+          {
+            width: "40%",
+            canvas: [
+              {
+                type: "polyline",
+                points: [
+                  { x: 0, y: 0 },
+                  { x: 280, y: 0 },
+                  { x: 280, y: 45 },
+                  { x: 60, y: 45 },
+                ],
+                closePath: true,
+                color: "#00332e",
+              },
+            ],
+            height: 45,
+            margin: [0, 0, 0, 0],
+          },
+        ],
+        margin: [0, 0, 0, 10],
       },
 
-      ...makeSection("Guest Information", {
-        "Guest Name": Array.isArray(data["Guest names"]) ? data["Guest names"]?.[0] : data["Guest names"],
-        "Booking Reference": Array.isArray(data["Booking references"])
-          ? data["Booking references"]?.[0]
-          : data["Booking references"],
-      }),
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+      {
+        text: "Voucher",
+        style: "title",
+        alignment: "center",
+        margin: [0, 12, 0, 12],
+      },
 
-      ...makeSection("Stay Details", {
-        "Check-In Date": data["Check-in/check-out dates"]?.["Check-in"] || data.checkInDate,
-        "Check-Out Date": data["Check-in/check-out dates"]?.["Check-out"] || data.checkOutDate,
-        "Room Category": data["Room category, inclusions, and meal plans"]?.["Room category"] || data.roomCategory,
-        "Meal Plan": data["Room category, inclusions, and meal plans"]?.["Meal plan"] || data.mealPlan,
-      }),
+      {
+        columns: [
+          {
+            width: "50%",
+            stack: [
+              makeField("Hotel", data["Hotel Name"]),
+              makeField("Address", data["Address"]),
+              makeField("Contact", data["Contact"]),
+            ],
+          },
+          {
+            width: "50%",
+            stack: [
+              makeField("Booking Date", data["Booking Date"]),
+              makeField("Hotel Confirmation", data["Hotel Confirmation"]),
+            ],
+          },
+        ],
+        margin: [0, 10, 0, 10],
+      },
 
-      ...makeSection("Other Details", {
-        "Number of Guests": data["Number of guests"],
-        "Hotel Name & Address": data["Hotel name and address"],
-        Inclusions: formatList(data["Room category, inclusions, and meal plans"]?.["Inclusions"]),
-        "Emergency Contact":
-          data["Emergency contact, remarks, policies, etc."]?.["Emergency contact"] ||
-          data["Emergency contact, remarks, policies, etc."]?.["Hotel contact"],
-        "Cancellation Policy": data["Emergency contact, remarks, policies, etc."]?.["Cancellation policy"],
-        Policies: formatNestedObject(data["Emergency contact, remarks, policies, etc."]),
-      }),
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }] },
+      makeField("Guest Name", data["Guest Name"]),
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 10] },
+
+      {
+        columns: [
+          {
+            width: "50%",
+            stack: [
+              makeField("Adults", data["Adults"]),
+              makeField("Rooms", data["Rooms"]),
+              makeField("Check in", data["Check in"]),
+            ],
+          },
+          {
+            width: "50%",
+            stack: [
+              makeField("Child", data["Child"]),
+              makeField("Nights", data["Nights"]),
+              makeField("Check out", data["Check out"]),
+            ],
+          },
+        ],
+        margin: [0, 0, 0, 10],
+      },
+
+      makeField("Room Category", data["Room Category"]),
+      makeField("Inclusions", formatList(data["Inclusions"])),
+
+      { canvas: [{ type: "line", x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1 }], margin: [0, 10, 0, 10] },
+
+      { text: "Terms and Conditions:", style: "termsHeader" },
+      {
+        ul: [
+          "Standard Check in time is 13:00 and Standard Check out time is 12:00.",
+          "Government ID is mandatory at the time of Check in.",
+          "City Tax/Resort fees to be paid directly at the hotel if applicable.",
+          "If a late check-in is planned, contact the property directly for their late check-in policy.",
+        ],
+        style: "termsList",
+        margin: [0, 4, 0, 30],
+      },
+
+      {
+        columns: [
+          {
+            width: "33%",
+            stack: [{ text: "📶  @nimbustours.travels", margin: [0, 0, 0, 3] }, { text: "🌐  nimbustours.in" }],
+          },
+          {
+            width: "33%",
+            stack: [{ text: "✉️  hotels@nimbustours.in", margin: [0, 0, 0, 3] }, { text: "📞  +91-9836466860" }],
+          },
+          {
+            width: "33%",
+            stack: [
+              { text: "📍  1st Floor, 8/1 Loudon Street,", margin: [0, 0, 0, 3] },
+              { text: "Kolkata - 700017, India" },
+            ],
+          },
+        ],
+        style: "footer",
+        margin: [0, 0, 0, 0],
+      },
     ],
 
     styles: {
-      brand: {
-        fontSize: 24,
-        bold: true,
-        color: "#1A73E8",
-      },
       title: {
-        fontSize: 16,
+        fontSize: 18,
         bold: true,
-        color: "#374151",
       },
-      sectionHeader: {
-        fontSize: 14,
+      fieldKey: {
         bold: true,
-        color: "#111827",
-        decoration: "underline",
-        margin: [0, 10, 0, 4],
+        fontSize: 12,
+        margin: [0, 8, 0, 2],
       },
-      itemKey: {
-        bold: true,
-        color: "#374151",
-        margin: [0, 2, 0, 2],
-      },
-      itemValue: {
-        color: "#111827",
-        margin: [0, 2, 0, 2],
-      },
-      sectionBox: {
+      fieldValue: {
         margin: [0, 0, 0, 12],
-        fillColor: "#F9FAFB",
-        padding: [10, 6, 10, 6],
+        fontSize: 11,
+      },
+      termsHeader: {
+        bold: true,
+        fontSize: 12,
+        margin: [0, 6, 0, 3],
+      },
+      termsList: {
+        fontSize: 10,
+      },
+      footer: {
+        fontSize: 9,
+        alignment: "center",
+        color: "#555",
       },
     },
 
     defaultStyle: {
-      fontSize: 11,
+      fontSize: 10,
     },
-
-    pageMargins: [40, 60, 40, 60],
   };
 
   pdfMake.createPdf(docDefinition).download("Hotel-Voucher-Summary.pdf");
 }
 
-function makeSection(title, fields) {
-  if (!fields || Object.keys(fields).length === 0) return [];
-
-  const content = [];
-
-  for (const key in fields) {
-    const rawVal = fields[key];
-    const val = typeof rawVal === "string" || typeof rawVal === "number" ? rawVal : formatList(rawVal);
-
-    content.push({
-      columns: [
-        { text: `${key}:`, style: "itemKey", width: "30%" },
-        { text: val || "N/A", style: "itemValue", width: "70%" },
-      ],
-    });
-  }
-
+function makeField(label, value) {
   return [
-    { text: title, style: "sectionHeader" },
+    { text: `${label}:`, style: "fieldKey" },
     {
-      stack: content,
-      style: "sectionBox",
+      text: value || "N/A",
+      style: "fieldValue",
+      noWrap: false,
+      preserveLeadingSpaces: true,
     },
   ];
 }
@@ -125,26 +214,4 @@ function formatList(val) {
       .join("\n");
   }
   return val;
-}
-
-function formatNestedObject(obj) {
-  if (!obj || typeof obj !== "object") return "N/A";
-
-  return Object.entries(obj)
-    .map(([key, value]) => {
-      let formattedValue = "";
-
-      if (typeof value === "string") {
-        formattedValue = value.trim();
-      } else if (Array.isArray(value)) {
-        formattedValue = value.map((v) => `  - ${v}`).join("\n");
-      } else if (typeof value === "object") {
-        formattedValue = formatNestedObject(value);
-      } else {
-        formattedValue = String(value);
-      }
-
-      return `• ${key}:\n    ${formattedValue}`;
-    })
-    .join("\n\n");
 }
