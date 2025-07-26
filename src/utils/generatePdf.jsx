@@ -1,6 +1,12 @@
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import logoBase64 from "./nimbusLogoBase64";
+import { instagramIconBase64 } from "./IconBase64";
+import { globeIconBase64 } from "./IconBase64";
+import { emailIconBase64 } from "./IconBase64";
+import { phoneIconBase64 } from "./IconBase64";
+import { locationIconBase64 } from "./IconBase64";
+
 pdfMake.vfs = pdfFonts.vfs;
 
 export async function generateStructuredPDF(data) {
@@ -76,7 +82,7 @@ export async function generateStructuredPDF(data) {
             stack: [
               makeField("Hotel", data["Hotel Name"]),
               makeField("Address", data["Address"]),
-              makeField("Contact", data["Contact"]),
+              makeField("Contact", data["Contact"] || "+91-9836466860"),
             ],
           },
           {
@@ -137,17 +143,52 @@ export async function generateStructuredPDF(data) {
         columns: [
           {
             width: "33%",
-            stack: [{ text: "📶  @nimbustours.travels", margin: [0, 0, 0, 3] }, { text: "🌐  nimbustours.in" }],
-          },
-          {
-            width: "33%",
-            stack: [{ text: "✉️  hotels@nimbustours.in", margin: [0, 0, 0, 3] }, { text: "📞  +91-9836466860" }],
+            stack: [
+              {
+                columns: [
+                  { image: instagramIconBase64, width: 12, margin: [0, 0, 5, 0] },
+                  { text: "@nimbustours.travels", fontSize: 9, alignment: "left" },
+                ],
+              },
+              {
+                columns: [
+                  { image: globeIconBase64, width: 12, margin: [0, 0, 5, 0] },
+                  { text: "nimbustours.in", fontSize: 9 },
+                ],
+              },
+            ],
           },
           {
             width: "33%",
             stack: [
-              { text: "📍  1st Floor, 8/1 Loudon Street,", margin: [0, 0, 0, 3] },
-              { text: "Kolkata - 700017, India" },
+              {
+                columns: [
+                  { image: emailIconBase64, width: 12, margin: [0, 0, 5, 0] },
+                  { text: "hotels@nimbustours.in", fontSize: 9 },
+                ],
+              },
+              {
+                columns: [
+                  { image: phoneIconBase64, width: 12, margin: [0, 0, 5, 0] },
+                  { text: "+91-9836466860", fontSize: 9 },
+                ],
+              },
+            ],
+          },
+          {
+            width: "33%",
+            stack: [
+              {
+                columns: [
+                  { image: locationIconBase64, width: 12, margin: [0, 0, 5, 0] },
+                  {
+                    stack: [
+                      { text: "1st Floor, 8/1 Loudon Street,", fontSize: 9 },
+                      { text: "Kolkata - 700017, India", fontSize: 9 },
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -158,28 +199,26 @@ export async function generateStructuredPDF(data) {
 
     styles: {
       title: {
-        fontSize: 18,
+        fontSize: 20,
         bold: true,
       },
       fieldKey: {
         bold: true,
-        fontSize: 12,
-        margin: [0, 8, 0, 2],
+        fontSize: 13,
       },
       fieldValue: {
-        margin: [0, 0, 0, 12],
-        fontSize: 11,
+        fontSize: 13,
       },
       termsHeader: {
         bold: true,
-        fontSize: 12,
-        margin: [0, 6, 0, 3],
+        fontSize: 13,
+        margin: [0, 10, 0, 5],
       },
       termsList: {
-        fontSize: 10,
+        fontSize: 11,
       },
       footer: {
-        fontSize: 9,
+        fontSize: 10,
         alignment: "center",
         color: "#555",
       },
@@ -194,15 +233,13 @@ export async function generateStructuredPDF(data) {
 }
 
 function makeField(label, value) {
-  return [
-    { text: `${label}:`, style: "fieldKey" },
-    {
-      text: value || "N/A",
-      style: "fieldValue",
-      noWrap: false,
-      preserveLeadingSpaces: true,
-    },
-  ];
+  return {
+    text: [
+      { text: `${label}: `, style: "fieldKey" },
+      { text: value || "N/A", style: "fieldValue" },
+    ],
+    margin: [0, 10, 0, 10],
+  };
 }
 
 function formatList(val) {

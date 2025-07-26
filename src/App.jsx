@@ -3,6 +3,7 @@ import FileUpload from "./Components/FileUpload.jsx";
 import ActionButtons from "./Components/ActionButtons.jsx";
 import RawTextViewer from "./Components/RawTextViewer.jsx";
 import StructuredDataViewer from "./Components/StructuredDataViewer.jsx";
+import FormInput from "./Components/FormInput.jsx";
 import { extractStructuredDataFromGemini } from "./utils/gemini.jsx";
 import { generateStructuredPDF } from "./utils/generatePdf";
 
@@ -13,6 +14,7 @@ export default function App() {
   const [isLoadingText, setIsLoadingText] = useState(false);
   const [isLoadingGemini, setIsLoadingGemini] = useState(false);
   const [error, setError] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -91,35 +93,69 @@ export default function App() {
   };
 
   return (
-    <div className="p-6 max-w-3xl mx-auto font-sans">
+    <div className="p-6 max-w-4xl mx-auto font-sans">
       <h1 className="text-3xl font-bold mb-6 text-gray-800">📄 PDF Data Extractor</h1>
 
-      <FileUpload
-        handleFileChange={handleFileChange}
-        pdfFile={pdfFile}
-        handleRemoveFile={handleRemoveFile}
-      />
-
-      <ActionButtons
-        extractTextFromPDF={extractTextFromPDF}
-        extractStructuredDataWithGemini={extractStructuredDataWithGemini}
-        pdfFile={pdfFile}
-        rawText={rawText}
-        isLoadingText={isLoadingText}
-        isLoadingGemini={isLoadingGemini}
-      />
-
-      {error && <p className="text-red-600 mt-2">{error}</p>}
-
-      <RawTextViewer rawText={rawText} />
-      <StructuredDataViewer structuredData={structuredData} />
-      {structuredData && (
+      <div className="flex gap-4 mb-6">
         <button
-          onClick={() => generateStructuredPDF(structuredData)}
-          className="mt-4 px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
-          Download PDF Summary
+          onClick={() => setShowForm(false)}
+          className={`px-4 py-2 rounded ${!showForm ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"}`}>
+          Upload PDF
         </button>
-      )}
+        <button
+          onClick={() => setShowForm(true)}
+          className={`px-4 py-2 rounded ${showForm ? "bg-blue-600 text-white" : "bg-gray-200 text-gray-800"}`}>
+          Fill Form
+        </button>
+      </div>
+
+      <div
+        className={`transition-opacity duration-500 ease-in-out ${
+          showForm ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
+        }`}>
+        {showForm && (
+          <div className="animate-fade-in">
+            <FormInput onSubmit={(data) => generateStructuredPDF(data)} />
+          </div>
+        )}
+      </div>
+
+      <div
+        className={`transition-opacity duration-500 ease-in-out ${
+          !showForm ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
+        }`}>
+        {!showForm && (
+          <>
+            <FileUpload
+              handleFileChange={handleFileChange}
+              pdfFile={pdfFile}
+              handleRemoveFile={handleRemoveFile}
+            />
+
+            <ActionButtons
+              extractTextFromPDF={extractTextFromPDF}
+              extractStructuredDataWithGemini={extractStructuredDataWithGemini}
+              pdfFile={pdfFile}
+              rawText={rawText}
+              isLoadingText={isLoadingText}
+              isLoadingGemini={isLoadingGemini}
+            />
+
+            {error && <p className="text-red-600 mt-2">{error}</p>}
+
+            <RawTextViewer rawText={rawText} />
+            <StructuredDataViewer structuredData={structuredData} />
+
+            {structuredData && (
+              <button
+                onClick={() => generateStructuredPDF(structuredData)}
+                className="mt-4 px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
+                Download PDF Summary
+              </button>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
