@@ -10,6 +10,17 @@ import { locationIconBase64 } from "./IconBase64";
 pdfMake.vfs = pdfFonts.vfs;
 
 export async function generateStructuredPDF(data) {
+  const currentDate = () => {
+    const today = new Date();
+
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const year = today.getFullYear();
+
+    const formattedDate = `${day}/${month}/${year}`;
+    return formattedDate;
+  };
+
   const docDefinition = {
     content: [
       {
@@ -88,7 +99,7 @@ export async function generateStructuredPDF(data) {
           {
             width: "50%",
             stack: [
-              makeField("Booking Date", data["Booking Date"]),
+              makeField("Booking Date", data["Booking Date"] || currentDate()),
               makeField("Hotel Confirmation", data["Hotel Confirmation"]),
             ],
           },
@@ -130,7 +141,7 @@ export async function generateStructuredPDF(data) {
       { text: "Terms and Conditions:", style: "termsHeader" },
       {
         ul: [
-          "Standard Check in time is 13:00 and Standard Check out time is 12:00.",
+          "Standard Check in time is 14:00 and Standard Check out time is 12:00.",
           "Government ID is mandatory at the time of Check in.",
           "City Tax/Resort fees to be paid directly at the hotel if applicable.",
           "If a late check-in is planned, contact the property directly for their late check-in policy.",
