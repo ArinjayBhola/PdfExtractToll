@@ -118,7 +118,7 @@ export async function generateStructuredPDF(data) {
             stack: [
               makeField("Adults", data["Adults"]),
               makeField("Rooms", data["Rooms"]),
-              makeField("Check in", data["Check in"]),
+              makeField("Check in", data["Check in date"]),
             ],
           },
           {
@@ -126,7 +126,7 @@ export async function generateStructuredPDF(data) {
             stack: [
               makeField("Child", data["Child"]),
               makeField("Nights", data["Nights"]),
-              makeField("Check out", data["Check out"]),
+              makeField("Check out", data["Check out date"]),
             ],
           },
         ],

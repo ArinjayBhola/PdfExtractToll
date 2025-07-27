@@ -10,8 +10,8 @@ Extract the following fields from the hotel voucher text below:
 - Guest Name
 - Child
 - Adults
-- Check in
-- Check out
+- Check in date
+- Check out date
 - Nights
 - Rooms
 - Room Category
