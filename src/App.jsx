@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FileUpload from "./Components/FileUpload.jsx";
 import ActionButtons from "./Components/ActionButtons.jsx";
 import RawTextViewer from "./Components/RawTextViewer.jsx";
 import StructuredDataViewer from "./Components/StructuredDataViewer.jsx";
 import FormInput from "./Components/FormInput.jsx";
+import PasswordPage from "./Components/PasswordPage.jsx";
 import { extractStructuredDataFromGemini } from "./utils/gemini.jsx";
 import { generateStructuredPDF } from "./utils/generatePdf";
 
@@ -15,6 +16,32 @@ export default function App() {
   const [isLoadingGemini, setIsLoadingGemini] = useState(false);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const auth = localStorage.getItem("authenticated");
+    if (auth === "true") setIsAuthenticated(true);
+  }, []);
+
+  const handleLogin = (password) => {
+    const correctPassword = import.meta.env.VITE_PASSWORD;
+    if (password === correctPassword) {
+      localStorage.setItem("authenticated", "true");
+      setIsAuthenticated(true);
+    } else {
+      alert("Incorrect password!");
+    }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("authenticated");
+    setIsAuthenticated(false);
+    setPdfFile(null);
+    setRawText("");
+    setStructuredData(null);
+    setError("");
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -37,9 +64,9 @@ export default function App() {
 
   const extractTextFromPDF = async () => {
     if (!pdfFile) return setError("No PDF selected.");
-
     const pdfjsLib = window.pdfjsLib;
     if (!pdfjsLib) return setError("pdf.js is not available.");
+
     pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
     setIsLoadingText(true);
@@ -92,8 +119,18 @@ export default function App() {
     }
   };
 
+  if (!isAuthenticated) {
+    return <PasswordPage onLogin={handleLogin} />;
+  }
+
   return (
-    <div className="p-6 max-w-4xl mx-auto font-sans">
+    <div className="p-6 max-w-4xl mx-auto font-sans relative">
+      <button
+        onClick={handleLogout}
+        className="absolute top-6 right-6 px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition cursor-pointer">
+        Logout
+      </button>
+
       <h1 className="text-3xl font-bold mb-6 text-gray-800">📄 PDF Data Extractor</h1>
 
       <div className="flex gap-4 mb-6">
@@ -109,53 +146,41 @@ export default function App() {
         </button>
       </div>
 
-      <div
-        className={`transition-opacity duration-500 ease-in-out ${
-          showForm ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
-        }`}>
-        {showForm && (
-          <div className="animate-fade-in">
-            <FormInput onSubmit={(data) => generateStructuredPDF(data)} />
-          </div>
-        )}
-      </div>
+      {showForm ? (
+        <div className="animate-fade-in">
+          <FormInput onSubmit={(data) => generateStructuredPDF(data)} />
+        </div>
+      ) : (
+        <>
+          <FileUpload
+            handleFileChange={handleFileChange}
+            pdfFile={pdfFile}
+            handleRemoveFile={handleRemoveFile}
+          />
 
-      <div
-        className={`transition-opacity duration-500 ease-in-out ${
-          !showForm ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
-        }`}>
-        {!showForm && (
-          <>
-            <FileUpload
-              handleFileChange={handleFileChange}
-              pdfFile={pdfFile}
-              handleRemoveFile={handleRemoveFile}
-            />
+          <ActionButtons
+            extractTextFromPDF={extractTextFromPDF}
+            extractStructuredDataWithGemini={extractStructuredDataWithGemini}
+            pdfFile={pdfFile}
+            rawText={rawText}
+            isLoadingText={isLoadingText}
+            isLoadingGemini={isLoadingGemini}
+          />
 
-            <ActionButtons
-              extractTextFromPDF={extractTextFromPDF}
-              extractStructuredDataWithGemini={extractStructuredDataWithGemini}
-              pdfFile={pdfFile}
-              rawText={rawText}
-              isLoadingText={isLoadingText}
-              isLoadingGemini={isLoadingGemini}
-            />
+          {error && <p className="text-red-600 mt-2">{error}</p>}
 
-            {error && <p className="text-red-600 mt-2">{error}</p>}
+          <RawTextViewer rawText={rawText} />
+          <StructuredDataViewer structuredData={structuredData} />
 
-            <RawTextViewer rawText={rawText} />
-            <StructuredDataViewer structuredData={structuredData} />
-
-            {structuredData && (
-              <button
-                onClick={() => generateStructuredPDF(structuredData)}
-                className="mt-4 px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
-                Download PDF Summary
-              </button>
-            )}
-          </>
-        )}
-      </div>
+          {structuredData && (
+            <button
+              onClick={() => generateStructuredPDF(structuredData)}
+              className="mt-4 px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
+              Download PDF Summary
+            </button>
+          )}
+        </>
+      )}
     </div>
   );
 }
