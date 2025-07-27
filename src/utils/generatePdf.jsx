@@ -157,16 +157,39 @@ export async function generateStructuredPDF(data) {
             stack: [
               {
                 columns: [
-                  { image: instagramIconBase64, width: 14, margin: [0, 0, 6, 0] },
-                  { text: "@nimbustours.travels", fontSize: 10, bold: true, alignment: "left" },
+                  {
+                    image: instagramIconBase64,
+                    width: 14,
+                    margin: [0, 0, 6, 0],
+                    alignment: "middle",
+                  },
+                  {
+                    text: "@nimbustours.travels",
+                    fontSize: 10,
+                    bold: true,
+                    alignment: "left",
+                    margin: [10, 0, 0, 0],
+                  },
                 ],
                 margin: [0, 0, 0, 5],
               },
               {
                 columns: [
-                  { image: globeIconBase64, width: 14, margin: [0, 0, 6, 0] },
-                  { text: "nimbustours.in", fontSize: 10, bold: true },
+                  {
+                    image: globeIconBase64,
+                    width: 14,
+                    margin: [0, 0, 6, 0],
+                    alignment: "middle",
+                  },
+                  {
+                    text: "nimbustours.in",
+                    fontSize: 10,
+                    bold: true,
+                    alignment: "left",
+                    margin: [10, 0, 0, 0],
+                  },
                 ],
+                margin: [0, 0, 0, 5],
               },
             ],
           },
@@ -175,16 +198,39 @@ export async function generateStructuredPDF(data) {
             stack: [
               {
                 columns: [
-                  { image: emailIconBase64, width: 14, margin: [0, 0, 6, 0] },
-                  { text: "hotels@nimbustours.in", fontSize: 10, bold: true },
+                  {
+                    image: emailIconBase64,
+                    width: 14,
+                    margin: [0, 0, 6, 0],
+                    alignment: "middle",
+                  },
+                  {
+                    text: "hotels@nimbustours.in",
+                    fontSize: 10,
+                    bold: true,
+                    alignment: "left",
+                    margin: [10, 0, 0, 0],
+                  },
                 ],
                 margin: [0, 0, 0, 5],
               },
               {
                 columns: [
-                  { image: phoneIconBase64, width: 14, margin: [0, 0, 6, 0] },
-                  { text: "+91-9836466860", fontSize: 10, bold: true },
+                  {
+                    image: phoneIconBase64,
+                    width: 14,
+                    margin: [0, 0, 6, 0],
+                    alignment: "middle",
+                  },
+                  {
+                    text: "+91-9836466860",
+                    fontSize: 10,
+                    bold: true,
+                    alignment: "left",
+                    margin: [10, 0, 0, 0],
+                  },
                 ],
+                margin: [0, 0, 0, 5],
               },
             ],
           },
@@ -193,14 +239,22 @@ export async function generateStructuredPDF(data) {
             stack: [
               {
                 columns: [
-                  { image: locationIconBase64, width: 14, margin: [0, 0, 6, 0] },
+                  {
+                    image: locationIconBase64,
+                    width: 14,
+                    margin: [0, 0, 6, 0],
+                    alignment: "middle",
+                  },
                   {
                     stack: [
                       { text: "1st Floor, 8/1 Loudon Street,", fontSize: 10, bold: true },
                       { text: "Kolkata - 700017, India", fontSize: 10, bold: true },
                     ],
+                    alignment: "left",
+                    margin: [10, 0, 0, 0],
                   },
                 ],
+                margin: [0, 0, 0, 5],
               },
             ],
           },
@@ -217,10 +271,10 @@ export async function generateStructuredPDF(data) {
       },
       fieldKey: {
         bold: true,
-        fontSize: 13,
+        fontSize: 14,
       },
       fieldValue: {
-        fontSize: 13,
+        fontSize: 12,
       },
       termsHeader: {
         bold: true,
@@ -251,7 +305,7 @@ function makeField(label, value) {
       { text: `${label}: `, style: "fieldKey" },
       { text: value || "N/A", style: "fieldValue" },
     ],
-    margin: [0, 10, 0, 10],
+    margin: [5, 10, 0, 10],
   };
 }
 
