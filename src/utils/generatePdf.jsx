@@ -296,7 +296,7 @@ export async function generateStructuredPDF(data) {
     },
   };
 
-  pdfMake.createPdf(docDefinition).download("Hotel-Voucher-Summary.pdf");
+  pdfMake.createPdf(docDefinition).download(`${data["Hotel Name"]}_voucher .pdf`);
 }
 
 function makeField(label, value) {
