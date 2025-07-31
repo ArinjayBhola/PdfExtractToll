@@ -77,8 +77,10 @@ export default function FormInput({ onSubmit }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-gray-100 p-6 rounded-lg shadow">
-      <h2 className="sm:col-span-2 text-lg font-semibold text-gray-800 mb-2">Hotel Booking Form</h2>
+      className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-gray-100 p-4 sm:p-6 rounded-lg shadow w-full">
+      <h2 className="sm:col-span-2 text-lg sm:text-xl font-semibold text-gray-800 mb-2 text-center sm:text-left">
+        🏨 Hotel Booking Form
+      </h2>
 
       {Object.keys(formData).map((key) => (
         <div
@@ -102,16 +104,16 @@ export default function FormInput({ onSubmit }) {
         </div>
       ))}
 
-      <div className="sm:col-span-2 mt-4 flex flex-col gap-3">
+      <div className="sm:col-span-2 mt-4 flex flex-col sm:flex-row gap-3">
         <button
           type="submit"
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded">
+          className="w-full sm:w-auto flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition">
           Generate PDF
         </button>
         <button
           type="button"
           onClick={handleClear}
-          className="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded">
+          className="w-full sm:w-auto flex-1 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded transition">
           Clear Form
         </button>
       </div>
