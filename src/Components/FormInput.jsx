@@ -74,35 +74,46 @@ export default function FormInput({ onSubmit }) {
     }
   };
 
+  const getInputType = (field) => {
+    const lower = field.toLowerCase();
+    if (["check in", "check out", "booking date"].includes(lower)) return "date";
+    if (["adults", "child", "rooms", "nights", "contact"].includes(lower)) return "number";
+    return "text";
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
       className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-gray-100 p-4 sm:p-6 rounded-lg shadow w-full">
       <h2 className="sm:col-span-2 text-lg sm:text-xl font-semibold text-gray-800 mb-2 text-center sm:text-left">
-        🏨 Hotel Booking Form
+        Hotel Booking Form
       </h2>
 
-      {Object.keys(formData).map((key) => (
-        <div
-          key={key}
-          className="flex flex-col">
-          <label
-            htmlFor={key}
-            className="font-medium text-gray-700 mb-1">
-            {key}
-            {requiredFields.includes(key) && <span className="text-red-500 ml-1">*</span>}
-          </label>
-          <input
-            type="text"
-            id={key}
-            name={key}
-            value={formData[key]}
-            onChange={handleChange}
-            className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
-            placeholder={`Enter ${key.toLowerCase()}`}
-          />
-        </div>
-      ))}
+      {Object.keys(formData).map((key) => {
+        const inputType = getInputType(key);
+        return (
+          <div
+            key={key}
+            className="flex flex-col">
+            <label
+              htmlFor={key}
+              className="font-medium text-gray-700 mb-1">
+              {key}
+              {requiredFields.includes(key) && <span className="text-red-500 ml-1">*</span>}
+            </label>
+            <input
+              type={inputType}
+              id={key}
+              name={key}
+              value={formData[key]}
+              onChange={handleChange}
+              className="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder={`Enter ${key.toLowerCase()}`}
+              {...(inputType === "number" ? { inputMode: "numeric", pattern: "\\d*", min: 0 } : {})}
+            />
+          </div>
+        );
+      })}
 
       <div className="sm:col-span-2 mt-4 flex flex-col sm:flex-row gap-3">
         <button
