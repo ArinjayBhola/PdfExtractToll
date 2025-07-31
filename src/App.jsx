@@ -85,18 +85,42 @@ export default function App() {
           const content = await page.getTextContent();
           const text = content.items
             .map((item) => item.str)
-            .join("")
+            .join(" ")
             .replace(/\s{2,}/g, " ")
             .replace(/([a-z])([A-Z])/g, "$1 $2")
             .replace(/\n\s+/g, "\n");
+
           fullText += `Page ${i}:\n${text}\n\n`;
         }
+
+        fullText = fullText.replace(
+          /(\d{1,2} \w+ \d{4})\s+Check-?in\s+(\d{1,2} \w+ \d{4})\s+Check-?out/i,
+          "Check-in: $1\nCheck-out: $2",
+        );
+
+        const keywords = [
+          "Check-in",
+          "Check-out",
+          "Room",
+          "Confirmation",
+          "Includes",
+          "Reserved for",
+          "Guest Name",
+          "Hotel Name",
+          "Address",
+          "Booking Date",
+          "Contact",
+        ];
+        keywords.forEach((word) => {
+          const regex = new RegExp(`\\s*${word}`, "g");
+          fullText = fullText.replace(regex, `\n${word}`);
+        });
 
         setRawText(fullText);
         setIsLoadingText(false);
       };
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setError("Failed to extract text from PDF.");
       setIsLoadingText(false);
     }
