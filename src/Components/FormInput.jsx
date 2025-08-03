@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const defaultData = {
   "Hotel Name": "",
@@ -19,6 +22,8 @@ const defaultData = {
 
 export default function FormInput({ onSubmit }) {
   const [formData, setFormData] = useState(defaultData);
+  const [email, setEmail] = useState("");
+  const [isSending, setIsSendingEmail] = useState(false);
 
   const requiredFields = [
     "Hotel Name",
@@ -81,6 +86,33 @@ export default function FormInput({ onSubmit }) {
     return "text";
   };
 
+  const handleSendEmail = async () => {
+    if (!email) {
+      toast.error("Please enter an email address.");
+      return;
+    }
+    const structuredData = { ...formData };
+
+    setIsSendingEmail(true);
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_URL}send-pdf`, {
+        structuredData,
+        email,
+      });
+
+      if (response.data.success) {
+        toast.success("Email sent successfully!");
+      } else {
+        toast.error("Failed to send email.");
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+      toast.error("Error sending email.");
+    } finally {
+      setIsSendingEmail(false);
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -115,18 +147,48 @@ export default function FormInput({ onSubmit }) {
         );
       })}
 
-      <div className="sm:col-span-2 mt-4 flex flex-col sm:flex-row gap-3">
-        <button
-          type="submit"
-          className="w-full sm:w-auto flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition">
-          Generate PDF
-        </button>
-        <button
-          type="button"
-          onClick={handleClear}
-          className="w-full sm:w-auto flex-1 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded transition">
-          Clear Form
-        </button>
+      <div className="sm:col-span-2 mt-4 flex flex-col gap-4">
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            type="email"
+            placeholder="Enter email to send PDF"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-3 mt-2">
+          <button
+            type="submit"
+            className="w-full sm:w-auto flex-1 bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition">
+            Generate PDF
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClear}
+            className="w-full sm:w-auto flex-1 bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded transition">
+            Clear Form
+          </button>
+
+          <button
+            type="button"
+            onClick={handleSendEmail}
+            disabled={isSending}
+            className={`w-full sm:w-auto flex-1 text-white font-medium py-2 px-4 rounded transition ${
+              isSending ? "bg-green-400 cursor-not-allowed" : "bg-green-600 hover:bg-green-700"
+            }`}>
+            {isSending ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="animate-spin w-4 h-4" />
+                Sending...
+              </span>
+            ) : (
+              "Send PDF via Email"
+            )}
+          </button>
+        </div>
       </div>
     </form>
   );

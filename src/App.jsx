@@ -7,6 +7,9 @@ import FormInput from "./Components/FormInput.jsx";
 import PasswordPage from "./Components/PasswordPage.jsx";
 import { extractStructuredDataFromGemini } from "./utils/gemini.jsx";
 import { generateStructuredPDF } from "./utils/generatePdf";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import SendEmailSection from "./Components/SendEmailSection.jsx";
 
 export default function App() {
   const [pdfFile, setPdfFile] = useState(null);
@@ -16,8 +19,11 @@ export default function App() {
   const [isLoadingGemini, setIsLoadingGemini] = useState(false);
   const [error, setError] = useState("");
   const [showForm, setShowForm] = useState(false);
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    window.generatePDF = generateStructuredPDF;
+  }, []);
 
   useEffect(() => {
     const auth = localStorage.getItem("authenticated");
@@ -209,15 +215,13 @@ export default function App() {
             <StructuredDataViewer structuredData={structuredData} />
           </div>
 
-          {structuredData && (
-            <button
-              onClick={() => generateStructuredPDF(structuredData)}
-              className="mt-6 w-full sm:w-auto px-5 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition">
-              Download PDF Summary
-            </button>
-          )}
+          {structuredData && <SendEmailSection structuredData={structuredData} />}
         </>
       )}
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+      />
     </div>
   );
 }
